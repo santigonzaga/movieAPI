@@ -9,15 +9,7 @@
 // genre API https://api.themoviedb.org/3/genre/movie/list?
 // now playing API https://api.themoviedb.org/3/movie/now_playing?
 
-import Foundation
-
-struct Movie {
-    let title: String
-    let average: Double
-    let overview: String
-    let image: String
-    let genre: [Int]
-}
+import UIKit
 
 struct MovieAPI {
     let api_key: String = "api_key=e93b8bbdf3d35298717bb67103decfaa"
@@ -79,13 +71,19 @@ struct MovieAPI {
                   let average = movieDictionary["vote_average"] as? Double,
                   let overview = movieDictionary["overview"] as? String,
                   let image = movieDictionary["poster_path"] as? String,
-                  let genre = movieDictionary["genre_ids"] as? [Int]
+                  let genre = movieDictionary["genre_ids"] as? [Int],
+                  let imageUI = fetchMoviePoster(with: URL(string: "https://image.tmdb.org/t/p/w500\(image)"))
             else { continue }
-            let movie = Movie(title: title, average: average, overview: overview, image: image, genre: genre)
+            let movie = Movie(title: title, average: average, overview: overview, image: imageUI, genre: genre)
             moviesArray.append(movie)
         }
         
         return moviesArray
+    }
+    
+    func fetchMoviePoster(with url: URL?) -> UIImage? {
+        guard let url = url, let data = try? Data(contentsOf: url) else { return nil }
+        return UIImage(data: data)
     }
     
     
